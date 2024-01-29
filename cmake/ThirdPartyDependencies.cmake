@@ -5,7 +5,8 @@ include(FetchContent)
 FetchContent_Declare(
   glew
   URL https://github.com/nigels-com/glew/releases/download/glew-2.2.0/glew-2.2.0-win32.zip
-)
+  DOWNLOAD_EXTRACT_TIMESTAMP true
+  )
 FetchContent_MakeAvailable(glew)
 # Set up include and lib paths for GLEW
 set(GLEW_INCLUDE_DIR "${glew_SOURCE_DIR}/include")
@@ -16,7 +17,8 @@ include_directories(${GLEW_INCLUDE_DIR})
 FetchContent_Declare(
   glfw
   URL https://github.com/glfw/glfw/releases/download/3.3.9/glfw-3.3.9.bin.WIN64.zip
-)
+  DOWNLOAD_EXTRACT_TIMESTAMP true
+  )
 FetchContent_MakeAvailable(glfw)
 # Set up include and lib paths for GLFW
 set(GLFW_INCLUDE_DIR "${glfw_SOURCE_DIR}/include")
@@ -27,7 +29,8 @@ include_directories(${GLFW_INCLUDE_DIR})
 FetchContent_Declare(
   implot
   URL https://github.com/epezent/implot/archive/refs/tags/v0.16.zip
-)
+  DOWNLOAD_EXTRACT_TIMESTAMP true
+  )
 FetchContent_MakeAvailable(implot)
 include_directories(${implot_SOURCE_DIR})
 file(GLOB IMPLOT_SOURCES "${implot_SOURCE_DIR}/*.cpp")
@@ -36,7 +39,8 @@ file(GLOB IMPLOT_SOURCES "${implot_SOURCE_DIR}/*.cpp")
 FetchContent_Declare(
   imgui
   URL https://github.com/ocornut/imgui/archive/refs/tags/v1.90.1.zip
-)
+  DOWNLOAD_EXTRACT_TIMESTAMP true
+  )
 FetchContent_MakeAvailable(imgui)
 include_directories(${imgui_SOURCE_DIR} ${imgui_SOURCE_DIR}/backends)
 # Specify the source files for ImGui and ImPlot

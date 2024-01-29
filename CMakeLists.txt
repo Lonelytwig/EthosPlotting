@@ -12,7 +12,7 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/../app)
 set(SRC_DIR "${CMAKE_SOURCE_DIR}/src")
 
 # Include other cmake scripts
-include(${CMAKE_SOURCE_DIR}/ThirdPartyDependencies.cmake)
+include(${CMAKE_SOURCE_DIR}/cmake/ThirdPartyDependencies.cmake)
 
 # Define the sources for your application
 set(APP_SOURCES "${SRC_DIR}/main.cpp" "${imgui_SOURCE_DIR}/imgui_demo.cpp")
