@@ -47,7 +47,7 @@ help() {
 setup_build() {
     mkdir "${BUILD_DIR}"
     echo
-    (cmake -S "${CMAKE_DIR}" -B "${BUILD_DIR}" -G "MinGW Makefiles")
+    (cmake -S "${CMAKE_DIR}" -B "${BUILD_DIR}" -G "MinGW Makefiles" -Dprotobuf_BUILD_TESTS=OFF)
 }
 
 # Check for presence of build directory
@@ -73,7 +73,7 @@ build() {
     # Call make on new build with all cpu cores
     echo
     echo Building project
-    NPROC=$(nproc)
+    NPROC=32
     (cd "${BUILD_DIR}" && make -j$NPROC)
 }
 

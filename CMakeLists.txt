@@ -19,6 +19,10 @@ set(APP_SOURCES "${SRC_DIR}/main.cpp" "${imgui_SOURCE_DIR}/imgui_demo.cpp")
 
 # Add executable
 add_executable(MyApp ${APP_SOURCES})
+
+# Build 3rd party projects first
+build_before_app(MyApp)
+
 # Set the output directory for the MyApp target
 set_target_properties(MyApp PROPERTIES
     RUNTIME_OUTPUT_DIRECTORY "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}"
