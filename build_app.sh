@@ -47,7 +47,7 @@ help() {
 setup_build() {
     mkdir "${BUILD_DIR}"
     echo
-    (cmake -S "${CMAKE_DIR}" -B "${BUILD_DIR}" -G "MinGW Makefiles" -Dprotobuf_BUILD_TESTS=OFF)
+    (cmake -S "${CMAKE_DIR}" -B "${BUILD_DIR}" -G "MinGW Makefiles" -Dprotobuf_BUILD_TESTS=OFF -DCMAKE_EXPORT_COMPILE_COMMANDS=ON)
 }
 
 # Check for presence of build directory
@@ -114,6 +114,12 @@ graph() {
     fi
     )
 }
+# Display detailed header dependency graph
+generate_header_dependency_graph() {
+    # Call make on new build with all cpu cores
+    (cmake -S "${CMAKE_DIR}" -B "${BUILD_DIR}" -G "MinGW Makefiles" 2> asd.txt)
+    (cd "${BUILD_DIR}" && make -j6 &> asd.txt)
+}
 
 # User input
 if [ $# -eq 0 ]; then
@@ -121,7 +127,7 @@ if [ $# -eq 0 ]; then
     help
     exit 1
 fi
-while getopts bchgu flag;
+while getopts bchguq flag;
 do
     case ${flag} in
         b)  # Build program
@@ -134,5 +140,7 @@ do
             graph;;
         u)  # Upload FW to device
             upload;;
+        q)
+            generate_header_dependency_graph;;
     esac
 done
