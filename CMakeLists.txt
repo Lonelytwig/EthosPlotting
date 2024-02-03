@@ -9,8 +9,8 @@ if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
     add_compile_options(-MMD) # Use -MD if you want to see the compiler includes as well
 endif()
 
-# set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -H")
-# set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -H")
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+
 # Define output directories
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/../app)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/../app)

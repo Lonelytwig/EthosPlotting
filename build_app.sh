@@ -47,7 +47,7 @@ help() {
 setup_build() {
     mkdir "${BUILD_DIR}"
     echo
-    (cmake -S "${CMAKE_DIR}" -B "${BUILD_DIR}" -G "MinGW Makefiles" -Dprotobuf_BUILD_TESTS=OFF -DCMAKE_EXPORT_COMPILE_COMMANDS=ON)
+    (cmake -S "${CMAKE_DIR}" -B "${BUILD_DIR}" -G "MinGW Makefiles" -Dprotobuf_BUILD_TESTS=OFF)
 }
 
 # Check for presence of build directory
