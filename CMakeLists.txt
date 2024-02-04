@@ -4,11 +4,9 @@ cmake_minimum_required(VERSION 3.20)
 project(MyApp)
 set(CMAKE_CXX_STANDARD 17)
 
-# Check if the compiler is GCC or Clang, then add the -MMD option
-if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
-    add_compile_options(-MMD) # Use -MD if you want to see the compiler includes as well
-endif()
-
+# Generates .d output (dependecy of source file)
+add_compile_options(-MMD) # Use -MD if you want to see the compiler includes as well
+# Observe all compiler actions
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 # Define output directories
