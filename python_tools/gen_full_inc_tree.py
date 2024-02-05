@@ -105,8 +105,10 @@ def parse_dep_file(dep_file_path):
 
         if not include_guards_section and line.strip():
             depth = len(line) - len(line.lstrip("."))
-            file_path = line.strip().lstrip(".").strip()
+            # DOT standards don't allow some characters such as colon
+            file_path = line.strip().lstrip(".").strip().replace(":","-")
             includes.append((depth, file_path))
+
 
     return includes
 
@@ -128,41 +130,42 @@ def generate_graph_for_dep_file(dep_file_path):
         print(f"No includes found in {dep_filename}, skipping.")
         return
 
-    graph = Digraph(
-        comment=f"Include Dependency Graph for {dep_filename}", format="svg"
-    )
-    graph.attr(
-        "node",
-        shape="box",
-        style="filled",
-        fillcolor="lightgrey",
-        width="1.5",
-        height="0.5",
-    )
-    graph.attr(rankdir="TB", ranksep="5")
+    graph = Digraph(comment="Include Dependency Graph", format="svg")
+    graph.attr(rankdir="LR")
 
-    node_stack = []  # Initialize node stack
+    # Create subgraph for top-level includes to ensure they are at the top
+    with graph.subgraph() as s:
+        s.attr(rank='source')
+        s.attr("node", shape="box", style="filled", fillcolor="lightgrey")
 
-    # Create linkages and visual view of dependencies
+        # First, add all top-level nodes to the subgraph
+        for depth, include_file in includes:
+            if depth == 1:  # Identify top-level includes
+                node_name = include_file
+                s.node(node_name, label=include_file)
+    node_stack = []
+    # Process and add all other includes, creating edges based on their depth
     for depth, include_file in includes:
-        node_name = os.path.basename(include_file).replace(
-            ".", "_"
-        )  # Sanitize node name
-        if node_name and not graph.node(node_name):
-            graph.node(node_name, label=node_name)
-
-        # Adjust node stack based on current depth
-        node_stack = node_stack[:depth]  # Ensure stack is only as deep as current depth
-        if node_stack:
-            # Add edge from last node in stack to current node
-            graph.edge(node_stack[-1], node_name)
-
-        # Push current node onto stack
-        if node_name:  # Ensure node_name is not None or empty
-            if len(node_stack) < depth + 1:
+        node_name = include_file
+        # Account for zeros based indexing and parent node
+        stack_depth = depth - 2
+        child_entry_depth = depth - 1 
+        # Ignore top level nodes
+        if depth != 1:
+            graph.node(node_name, label=include_file)
+        else:
+            node_stack = []
+        
+        if depth == 1:
+            # Setup parent node
+            node_stack.append(node_name)
+        else:
+            # Keep updating child nodes
+            if depth > len(node_stack):
                 node_stack.append(node_name)
             else:
-                node_stack[depth] = node_name
+                node_stack[child_entry_depth] = node_name
+            graph.edge(node_stack[stack_depth], node_stack[child_entry_depth])
 
     # Specify output file for the graph (SVG format)
     output_path = graph.render(filename=graph_filename, view=False, cleanup=True)
@@ -172,8 +175,8 @@ def generate_graph_for_dep_file(dep_file_path):
 def generate_graphs(proj_root_dir, build_dir, output_dir):
     """Wrapped call to generate all outputs"""
 
-    if not generate_dependency_trees(proj_root_dir, build_dir, output_dir):
-        return
+    # if not generate_dependency_trees(proj_root_dir, build_dir, output_dir):
+    #     return
     # Create visual output
     for root, dirs, files in os.walk(output_dir):
         for file in files:
