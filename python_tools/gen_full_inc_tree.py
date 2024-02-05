@@ -131,7 +131,7 @@ def generate_graph_for_dep_file(dep_file_path):
         return
 
     graph = Digraph(comment="Include Dependency Graph", format="svg")
-    graph.attr(rankdir="LR")
+    graph.attr(rankdir="LR", ranksep="1.5")
 
     # Create subgraph for top-level includes to ensure they are at the top
     with graph.subgraph() as s:
@@ -175,8 +175,8 @@ def generate_graph_for_dep_file(dep_file_path):
 def generate_graphs(proj_root_dir, build_dir, output_dir):
     """Wrapped call to generate all outputs"""
 
-    # if not generate_dependency_trees(proj_root_dir, build_dir, output_dir):
-    #     return
+    if not generate_dependency_trees(proj_root_dir, build_dir, output_dir):
+        return
     # Create visual output
     for root, dirs, files in os.walk(output_dir):
         for file in files:
