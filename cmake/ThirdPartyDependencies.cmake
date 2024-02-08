@@ -38,7 +38,7 @@ file(GLOB IMPLOT_SOURCES "${implot_SOURCE_DIR}/*.cpp")
 ################### ImGui ##################
 FetchContent_Declare(
   imgui
-  URL https://github.com/ocornut/imgui/archive/refs/tags/v1.90.1.zip
+  URL https://github.com/ocornut/imgui/archive/refs/tags/v1.90.1-docking.zip
   DOWNLOAD_EXTRACT_TIMESTAMP true
   )
 FetchContent_MakeAvailable(imgui)
@@ -68,13 +68,16 @@ ExternalProject_Add(protobuf
     # Initialize and update submodules
     UPDATE_COMMAND git submodule update --init
 
-    
-    
     # Configure download, build and output locations
     PREFIX "${CMAKE_BINARY_DIR}/_deps/protobuf-src"
     BINARY_DIR "${CMAKE_BINARY_DIR}/_deps/protobuf-build"
     # Run CMake
-    CMAKE_ARGS -G "MinGW Makefiles" -DCMAKE_BUILD_TYPE=Release -Dprotobuf_BUILD_TESTS=OFF
+    CMAKE_ARGS 
+        -G "MinGW Makefiles"
+        -DCMAKE_BUILD_TYPE=Release
+        -Dprotobuf_BUILD_TESTS=OFF
+        -DCMAKE_C_COMPILER=${CMAKE_C_COMPILER}
+        -DCMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER}
 
     # Build the project (no explicit command needed)
 

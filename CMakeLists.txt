@@ -1,8 +1,9 @@
 # Specify the minimum version for CMake
 cmake_minimum_required(VERSION 3.20)
+include(${CMAKE_SOURCE_DIR}/cmake/compiler_config.cmake)
 
 project(MyApp)
-set(CMAKE_CXX_STANDARD 17)
+
 
 # Generates .d output (dependecy of source file)
 add_compile_options(-MMD) # Use -MD if you want to see the compiler includes as well
