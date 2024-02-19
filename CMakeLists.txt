@@ -15,16 +15,21 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/../app)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/../app)
 
 # Specify module source directories
-set(SRC_DIR "${CMAKE_SOURCE_DIR}/src")
+set(SRC_DIR "${CMAKE_SOURCE_DIR}/core/src")
 
 # Include other cmake scripts
 include(${CMAKE_SOURCE_DIR}/cmake/ThirdPartyDependencies.cmake)
 
 # Define the sources for your application
-set(APP_SOURCES "${SRC_DIR}/main.cpp" "${imgui_SOURCE_DIR}/imgui_demo.cpp")
+set(APP_SOURCES 
+    "${SRC_DIR}/main.cpp" 
+    "${SRC_DIR}/main_window.cpp" 
+    "${imgui_SOURCE_DIR}/imgui_demo.cpp")
 
 # Add executable
 add_executable(MyApp ${APP_SOURCES})
+target_include_directories(MyApp PRIVATE "${CMAKE_SOURCE_DIR}/core/inc")
+
 
 # Build 3rd party projects first
 build_before_app(MyApp)

@@ -1,17 +1,23 @@
-#include <GL/glew.h>     // GLEW
-#include <GLFW/glfw3.h>  // GLFW
+#include <GL/glew.h>
+#include <GLFW/glfw3.h>
+#include <GLFW/glfw3native.h>  // Only necessary if you're using native functions
 
 #include <cmath>
+#include <iostream>
+#include <vector>
 
+// ImGui includes
 #include "imgui.h"
 #include "imgui_impl_glfw.h"
 #include "imgui_impl_opengl3.h"
 #include "implot.h"
-#include "iostream"
-#include "vector"
 
+// Project includes
+#include "main_window.h"
+
+// Error callback function for GLFW
 static void glfw_error_callback(int error, const char* description) {
-  fprintf(stderr, "Glfw Error %d: %s\n", error, description);
+  std::cerr << "GLFW Error " << error << ": " << description << std::endl;
 }
 
 int main(int, char**) {
@@ -19,17 +25,17 @@ int main(int, char**) {
   glfwSetErrorCallback(glfw_error_callback);
   if (!glfwInit()) return -1;
 
-  const char* glsl_version = "#version 130";  // GLSL 130 for OpenGL 3.0
   glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
   glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
 
   GLFWwindow* window = glfwCreateWindow(
       1280, 720, "Dear ImGui + ImPlot Example with Viewports", NULL, NULL);
-  if (window == NULL) return -1;
+  if (window == nullptr) {
+    glfwTerminate();
+    return -1;
+  }
   glfwMakeContextCurrent(window);
   glfwSwapInterval(1);  // Enable vsync
-
-  // Initialize OpenGL loader here (GLAD or gl3w)
 
   IMGUI_CHECKVERSION();
   ImGui::CreateContext();
@@ -41,6 +47,7 @@ int main(int, char**) {
   ImGui::StyleColorsDark();
 
   ImGui_ImplGlfw_InitForOpenGL(window, true);
+  const char* glsl_version = "#version 130";  // GLSL 130 for OpenGL 3.0
   ImGui_ImplOpenGL3_Init(glsl_version);
 
   while (!glfwWindowShouldClose(window)) {
@@ -51,7 +58,11 @@ int main(int, char**) {
     ImGui::NewFrame();
 
     ImGui::ShowDemoWindow();
-    ImPlot::ShowDemoWindow();
+    // Create an ImGui window
+    // Example window flags
+    button_test();
+
+    ImPlot::ShowDemoWindow(nullptr, "a");
 
     ImGui::Render();
     int display_w, display_h;
