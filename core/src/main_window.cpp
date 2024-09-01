@@ -7,6 +7,7 @@
 #include "imgui_impl_glfw.h"
 #include "imgui_impl_opengl3.h"
 #include "implot.h"
+
 void button_test() {
   ImGuiViewport* main_viewport = ImGui::GetMainViewport();
   float main_menu_bar_height = 0.0f;
