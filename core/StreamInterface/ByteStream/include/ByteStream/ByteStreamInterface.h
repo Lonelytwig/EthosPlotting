@@ -6,7 +6,8 @@
 
 class ByteStreamInterface : public ByteStreamBase {
  public:
-  ByteStreamInterface();
+  ByteStreamInterface() = delete;
+  ByteStreamInterface(const UdpConfig &config);
   ~ByteStreamInterface() = default;
 
   uint64_t get_bytes(uint8_t *buffer, uint64_t buffer_length) final;

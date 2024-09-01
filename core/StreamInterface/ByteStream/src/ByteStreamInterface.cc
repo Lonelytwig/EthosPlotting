@@ -2,8 +2,8 @@
 
 #include "SocketStream/UdpStream.h"
 
-ByteStreamInterface::ByteStreamInterface() {
-  interface_pointer = std::make_unique<UdpStreamInterface>();
+ByteStreamInterface::ByteStreamInterface(const UdpConfig &config) {
+  interface_pointer = std::make_unique<UdpStreamInterface>(config);
 }
 
 uint64_t ByteStreamInterface::get_bytes(uint8_t *buffer,

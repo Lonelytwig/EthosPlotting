@@ -22,7 +22,10 @@ static void glfw_error_callback(int error, const char* description) {
 }
 
 int main(int, char**) {
-  ByteStreamInterface sock_test;
+  ByteStreamInterface sock_test(UdpConfig{.recv_ip = "127.0.0.1",
+                                          .recv_port = 8080,
+                                          .send_ip = "127.0.0.1",
+                                          .send_port = 8081});
   // Setup window
   glfwSetErrorCallback(glfw_error_callback);
   if (!glfwInit()) return -1;
@@ -83,6 +86,21 @@ int main(int, char**) {
     }
 
     glfwSwapBuffers(window);
+
+    std::string rx_buffer(128, '\0');
+    uint64_t length =
+        sock_test.get_bytes(reinterpret_cast<uint8_t*>(rx_buffer.data()), 128);
+    if (length) {
+      // If needed, resize the string to the actual number of bytes received
+      if (length < rx_buffer.size()) {
+        rx_buffer.resize(length);
+      }
+
+      // Output the received data (assuming it is printable)
+      std::cout << "Received data: " << rx_buffer << std::endl;
+      sock_test.send_bytes(reinterpret_cast<uint8_t*>(rx_buffer.data()),
+                           length);
+    }
   }
 
   ImGui_ImplOpenGL3_Shutdown();

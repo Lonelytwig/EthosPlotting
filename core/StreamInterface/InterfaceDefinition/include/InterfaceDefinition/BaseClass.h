@@ -2,6 +2,9 @@
 
 #include <stdint.h>
 
+#include <string>
+
+
 class ByteStreamBase {
  public:
   /**
@@ -20,4 +23,12 @@ class ByteStreamBase {
    *
    */
   virtual void send_bytes(uint8_t *buffer, uint64_t buffer_length) = 0;
+};
+
+// Define a struct to hold configuration parameters
+struct UdpConfig {
+  std::string recv_ip;  // IP address to receive from
+  uint16_t recv_port;   // Port number to receive from
+  std::string send_ip;  // IP address to send to
+  uint16_t send_port;   // Port number to send to
 };
