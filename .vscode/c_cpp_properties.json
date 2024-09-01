@@ -1,0 +1,24 @@
+{
+    "configurations": [
+        {
+            "name": "Win32",
+            "includePath": [
+                "${workspaceRoot}",
+                "${workspaceRoot}/build/_deps/imgui-src",
+                "${workspaceRoot}/build/_deps/imgui-src/backends",
+                "${workspaceRoot}/build/_deps/implot-src",
+                "${workspaceRoot}/build/_deps/glfw-src/include",
+                "${workspaceRoot}/build/_deps/glew-src/include",
+                "${workspaceRoot}/core/Core/inc",
+                "${workspaceRoot}/core/StreamInterface/ByteStream/include",
+                "${workspaceRoot}/core/StreamInterface/InterfaceDefinition/include",
+                "${workspaceRoot}/core/StreamInterface/SocketStream/include"
+            ],
+            "intelliSenseMode": "gcc-x86",
+            "compilerPath": "C:\\msys64\\mingw64\\bin\\gcc.exe",
+            "cStandard": "c17",
+            "cppStandard": "gnu++17"
+        }
+    ],
+    "version": 4
+}

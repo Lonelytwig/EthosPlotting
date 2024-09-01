@@ -44,7 +44,7 @@ FetchContent_Declare(
 FetchContent_MakeAvailable(imgui)
 include_directories(${imgui_SOURCE_DIR} ${imgui_SOURCE_DIR}/backends)
 # Specify the source files for ImGui and ImPlot
-file(GLOB IMGUI_SOURCES 
+file(GLOB IMGUI_SOURCES
 "${imgui_SOURCE_DIR}/imgui.cpp"
 "${imgui_SOURCE_DIR}/imgui_draw.cpp"
 "${imgui_SOURCE_DIR}/imgui_widgets.cpp"
@@ -64,7 +64,7 @@ include(ExternalProject)
 ExternalProject_Add(protobuf
     # Clone protobuf repository
     GIT_REPOSITORY https://github.com/protocolbuffers/protobuf.git
-    GIT_TAG main 
+    GIT_TAG main
 
     # Initialize and update submodules
     UPDATE_COMMAND git submodule update --init
@@ -73,7 +73,7 @@ ExternalProject_Add(protobuf
     PREFIX "${CMAKE_BINARY_DIR}/_deps/protobuf-src"
     BINARY_DIR "${CMAKE_BINARY_DIR}/_deps/protobuf-build"
     # Run CMake
-    CMAKE_ARGS 
+    CMAKE_ARGS
         -G "MinGW Makefiles"
         -DCMAKE_BUILD_TYPE=Release
         -Dprotobuf_BUILD_TESTS=OFF
@@ -114,10 +114,10 @@ function(setup_links_and_DLLs target_name)
     set(PROTOC_LIB "$<BUILD_INTERFACE:${CMAKE_BINARY_DIR}/_deps/protobuf-build/libprotoc.a>")
 
     # Link libraries
-    target_link_libraries(${target_name} PRIVATE 
-      ${GLEW_LIBRARY} 
-      ${GLFW_LIBRARY} 
-      OpenGL::GL 
+    target_link_libraries(${target_name} PRIVATE
+      ${GLEW_LIBRARY}
+      ${GLFW_LIBRARY}
+      OpenGL::GL
       ${PROTOBUF_LIB} ${PROTOC_LIB}
       )
 

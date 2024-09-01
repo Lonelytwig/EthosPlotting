@@ -1,4 +1,4 @@
-#include "ByteStream/SocketStream.h"
+#include "SocketStream/SocketStream.h"
 
 #include <winsock2.h>  // Include Winsock2 header for SOCKET functions
 #include <ws2tcpip.h>  // Include for additional Winsock functions
@@ -6,22 +6,21 @@
 #include <cstring>
 #include <iostream>
 
-
 #pragma comment(lib, "Ws2_32.lib")  // Link against Winsock library
 
 #define PORT 8080         // The port number to listen on
 #define BUFFER_SIZE 1024  // Size of the buffer for incoming data
 
-ByteStreamInterface::ByteStreamInterface() {
+SocketStreamInterface::SocketStreamInterface() {
   initSocket();  // Initialize the UDP socket
 }
 
-ByteStreamInterface::~ByteStreamInterface() {
+SocketStreamInterface::~SocketStreamInterface() {
   closesocket(udpSocket);  // Close the UDP socket
   WSACleanup();            // Clean up Winsock resources
 }
 
-void ByteStreamInterface::initSocket() {
+void SocketStreamInterface::initSocket() {
   WSADATA wsaData;
   int result = WSAStartup(MAKEWORD(2, 2), &wsaData);
   if (result != 0) {
@@ -73,7 +72,7 @@ void ByteStreamInterface::initSocket() {
       << PORT << std::endl;
 }
 
-std::vector<uint8_t> ByteStreamInterface::readData() {
+std::vector<uint8_t> SocketStreamInterface::readData() {
   std::vector<uint8_t> buffer(BUFFER_SIZE);
   struct sockaddr_in clientAddress;
   int clientLen = sizeof(clientAddress);

@@ -5,10 +5,12 @@
 #include <cstdint>
 #include <vector>
 
-class ByteStreamInterface {
+#include "InterfaceDefinition/BaseClass.h"
+
+class SocketStreamInterface : public ByteStreamBase {
  public:
-  ByteStreamInterface();
-  ~ByteStreamInterface();
+  SocketStreamInterface();
+  ~SocketStreamInterface();
 
   // Reads data from the UDP socket and returns it as a vector of bytes
   std::vector<uint8_t> readData();
