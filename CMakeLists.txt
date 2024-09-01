@@ -21,14 +21,17 @@ set(SRC_DIR "${CMAKE_SOURCE_DIR}/core/src")
 include(${CMAKE_SOURCE_DIR}/cmake/ThirdPartyDependencies.cmake)
 
 # Define the sources for your application
-set(APP_SOURCES 
-    "${SRC_DIR}/main.cpp" 
-    "${SRC_DIR}/main_window.cpp" 
-    "${imgui_SOURCE_DIR}/imgui_demo.cpp")
+# set(APP_SOURCES 
+#     "${SRC_DIR}/main.cpp" 
+#     "${SRC_DIR}/main_window.cpp" 
+#     "${imgui_SOURCE_DIR}/imgui_demo.cpp")
+set(APP_SOURCES
+"${SRC_DIR}/gpt.cc"
+)
 
 # Add executable
 add_executable(MyApp ${APP_SOURCES})
-target_include_directories(MyApp PRIVATE "${CMAKE_SOURCE_DIR}/core/inc")
+# target_include_directories(MyApp PRIVATE "${CMAKE_SOURCE_DIR}/core/inc")
 
 
 # Build 3rd party projects first
