@@ -3,7 +3,6 @@
 #include <memory>
 
 #include "InterfaceDefinition/BaseClass.h"
-#include "SocketStream/SocketStream.h"
 
 class ByteStreamInterface : public ByteStreamBase {
  public:
