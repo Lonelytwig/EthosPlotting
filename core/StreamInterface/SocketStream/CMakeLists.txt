@@ -4,4 +4,4 @@ add_library(SocketStreamInterface STATIC
 
 # Specify the include directories for the library
 target_include_directories(SocketStreamInterface PUBLIC include)
-target_link_libraries(SocketStreamInterface PUBLIC ByteStreamInterfaceDefintion)
+target_link_libraries(SocketStreamInterface PUBLIC ByteStreamInterfaceDefintion Ws2_32)

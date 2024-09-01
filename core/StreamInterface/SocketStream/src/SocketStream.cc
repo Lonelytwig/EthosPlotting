@@ -58,7 +58,7 @@ void SocketStreamInterface::initSocket() {
       htons(PORT);  // Convert port number to network byte order
 
   // Bind the socket to the specified port and address
-  if (bind(udpSocket, (const struct sockaddr*)&serverAddress,
+  if (bind(udpSocket, (const struct sockaddr *)&serverAddress,
            sizeof(serverAddress)) == SOCKET_ERROR) {
     std::cerr << "Failed to bind socket. Error: " << WSAGetLastError()
               << std::endl;
@@ -72,28 +72,34 @@ void SocketStreamInterface::initSocket() {
       << PORT << std::endl;
 }
 
-std::vector<uint8_t> SocketStreamInterface::readData() {
-  std::vector<uint8_t> buffer(BUFFER_SIZE);
+uint64_t SocketStreamInterface::get_bytes(uint8_t *buffer,
+                                          uint64_t buffer_length) {
   struct sockaddr_in clientAddress;
   int clientLen = sizeof(clientAddress);
 
-  // Receive data from the socket in non-blocking mode
-  int n =
-      recvfrom(udpSocket, reinterpret_cast<char*>(buffer.data()), BUFFER_SIZE,
-               0, (struct sockaddr*)&clientAddress, &clientLen);
+  // Attempt to receive data from the socket in non-blocking mode
+  int64_t num_bytes =
+      recvfrom(udpSocket, reinterpret_cast<char *>(buffer), buffer_length, 0,
+               (struct sockaddr *)&clientAddress, &clientLen);
 
-  if (n == SOCKET_ERROR) {
+  if (num_bytes == SOCKET_ERROR) {
     int error = WSAGetLastError();
     if (error == WSAEWOULDBLOCK) {
-      // No data available, fall through and return an empty vector
-      return {};
+      // No data available at the moment; return 0 bytes
+      return 0;
+    } else if (error == WSAEMSGSIZE) {
+      // Buffer was too small
+      std::cerr << "Buffer too small for incoming message. Error: " << error
+                << std::endl;
+      return 0;
     } else {
       std::cerr << "Failed to receive data. Error: " << error << std::endl;
-      return {};
+      return 0;
     }
   }
 
-  buffer.resize(
-      n);  // Resize the buffer to the actual size of the received data
-  return buffer;
+  return static_cast<uint64_t>(num_bytes);
 }
+
+void SocketStreamInterface::send_bytes(uint8_t *buffer,
+                                       uint64_t buffer_length) {}

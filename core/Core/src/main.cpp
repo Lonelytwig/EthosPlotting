@@ -13,6 +13,7 @@
 #include "implot.h"
 
 // Project includes
+#include "ByteStream/ByteStreamInterface.h"
 #include "main_window.h"
 
 // Error callback function for GLFW
@@ -21,6 +22,7 @@ static void glfw_error_callback(int error, const char* description) {
 }
 
 int main(int, char**) {
+  ByteStreamInterface sock_test;
   // Setup window
   glfwSetErrorCallback(glfw_error_callback);
   if (!glfwInit()) return -1;

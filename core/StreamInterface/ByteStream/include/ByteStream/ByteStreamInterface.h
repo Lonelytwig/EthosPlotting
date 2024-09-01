@@ -1,21 +1,19 @@
-// #pragma once
-// // Windows specific for sockets
-// #include <winsock2.h>
+#pragma once
 
-// #include <cstdint>
-// #include <vector>
+#include <memory>
 
-// class ByteStreamInterface {
-//  public:
-//   ByteStreamInterface();
-//   ~ByteStreamInterface();
+#include "InterfaceDefinition/BaseClass.h"
+#include "SocketStream/SocketStream.h"
 
-//   // Reads data from the UDP socket and returns it as a vector of bytes
-//   std::vector<uint8_t> readData();
+class ByteStreamInterface : public ByteStreamBase {
+ public:
+  ByteStreamInterface();
+  ~ByteStreamInterface() = default;
 
-//  private:
-//   SOCKET udpSocket;  // The UDP socket
+  uint64_t get_bytes(uint8_t *buffer, uint64_t buffer_length) final;
 
-//   // Initializes the UDP socket
-//   void initSocket();
-// };
+  void send_bytes(uint8_t *buffer, uint64_t buffer_length) final;
+
+ private:
+  std::unique_ptr<ByteStreamBase> interface_pointer;
+};
