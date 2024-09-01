@@ -62,7 +62,7 @@ int main(int, char**) {
     // Example window flags
     button_test();
 
-    ImPlot::ShowDemoWindow(nullptr, "a");
+    // ImPlot::ShowDemoWindow(nullptr, "a");
 
     ImGui::Render();
     int display_w, display_h;
