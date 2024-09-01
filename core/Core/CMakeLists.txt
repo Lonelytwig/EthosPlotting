@@ -9,7 +9,6 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 # Set the source files for the executable
 set(CORE_SRC
     src/main.cpp          # Main entry point
-    src/main_window.cpp
 )
 
 # Add executable using the source files directly
@@ -38,4 +37,4 @@ add_third_party_sources(MainApplication)
 setup_links_and_DLLs(MainApplication)
 
 # Link project static libraries to the executable
-target_link_libraries(MainApplication PRIVATE ByteStreamInterface)
+target_link_libraries(MainApplication PRIVATE ByteStreamInterface GuiDisplay)

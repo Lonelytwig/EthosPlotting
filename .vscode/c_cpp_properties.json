@@ -12,7 +12,8 @@
                 "${workspaceRoot}/core/Core/inc",
                 "${workspaceRoot}/core/StreamInterface/ByteStream/include",
                 "${workspaceRoot}/core/StreamInterface/InterfaceDefinition/include",
-                "${workspaceRoot}/core/StreamInterface/SocketStream/include"
+                "${workspaceRoot}/core/StreamInterface/SocketStream/include",
+                "${workspaceRoot}/core/Display/include"
             ],
             "intelliSenseMode": "gcc-x86",
             "compilerPath": "C:\\msys64\\mingw64\\bin\\gcc.exe",
