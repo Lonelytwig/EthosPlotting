@@ -22,15 +22,8 @@ set_target_properties(MainApplication PROPERTIES
     RUNTIME_OUTPUT_DIRECTORY "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}"
     LIBRARY_OUTPUT_DIRECTORY "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}")
 
-# Include other cmake scripts
-include(${CMAKE_SOURCE_DIR}/cmake/ThirdPartyDependencies.cmake)
-
-# Build 3rd party projects first
-build_before_app(MainApplication)
-# Call add third-party sources to output
-add_third_party_sources(MainApplication)
-# Setup 3rd party dlls and library links
-setup_links_and_DLLs(MainApplication)
+# Set up third-party dependencies
+setup_third_party_dependencies(MainApplication)
 
 # Link project static libraries to the executable
 target_link_libraries(MainApplication PRIVATE ByteStreamInterface GuiDisplay)

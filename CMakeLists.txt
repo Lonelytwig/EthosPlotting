@@ -2,6 +2,9 @@
 cmake_minimum_required(VERSION 3.20)
 # Setup project build setup
 include(${CMAKE_SOURCE_DIR}/cmake/compiler_config.cmake)
+# Include third-party setup module
+include(${CMAKE_SOURCE_DIR}/cmake/ThirdPartyDependencies.cmake)
+
 # Project root label
 project(EthosPlotting)
 
