@@ -17,10 +17,6 @@ add_executable(MainApplication ${CORE_SRC})
 # Add include directory
 target_include_directories(MainApplication PUBLIC inc)
 
-# Define output directory paths
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/../app)
-set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/../app)
-
 # Set the output directories for the executable
 set_target_properties(MainApplication PROPERTIES
     RUNTIME_OUTPUT_DIRECTORY "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}"

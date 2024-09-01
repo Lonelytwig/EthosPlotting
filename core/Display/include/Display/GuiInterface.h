@@ -13,7 +13,7 @@ class GuiInterface {
    * @brief Display application logical layout
    *
    */
-  void render();
+  bool render();
 
  private:
   /**

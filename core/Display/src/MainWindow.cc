@@ -18,6 +18,8 @@ static void glfw_error_callback(int error, const char* description) {
   std::cerr << "GLFW Error " << error << ": " << description << std::endl;
 }
 
+void GuiInterface::pollEvents() { glfwPollEvents(); }
+
 GuiInterface::GuiInterface() {
   // Setup window_
   glfwSetErrorCallback(glfw_error_callback);
@@ -49,10 +51,10 @@ GuiInterface::GuiInterface() {
   ImGui_ImplOpenGL3_Init(glsl_version);
 }
 
-void GuiInterface::render() {
+bool GuiInterface::render() {
   /* If window should be closed, fall through */
   if (glfwWindowShouldClose(window_)) {
-    return;
+    return false;
   }
   ImGuiIO& io = ImGui::GetIO();
 
@@ -86,6 +88,8 @@ void GuiInterface::render() {
   }
 
   glfwSwapBuffers(window_);
+
+  return true;
 }
 
 GuiInterface::~GuiInterface() { CloseWindowResources(); }

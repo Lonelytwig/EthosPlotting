@@ -18,8 +18,7 @@ int main(int, char**) {
                                           .send_port = 8081});
   GuiInterface window;
 
-  while (true) {
-    window.render();
+  while (window.render()) {
   }
 
   return 0;
