@@ -4,6 +4,9 @@
 #include <GLFW/glfw3.h>
 #include <GLFW/glfw3native.h>  // Only necessary if you're using native functions
 
+#include <vector>
+
+
 class GuiInterface {
  public:
   GuiInterface();
@@ -22,6 +25,8 @@ class GuiInterface {
    */
   void pollEvents();
 
+  void createWindow(int width, int height, const char* title);
+
   void renderStructureEditorWindow();
   /**
    * @brief Tear down gui window
@@ -29,5 +34,5 @@ class GuiInterface {
    */
   void CloseWindowResources();
 
-  GLFWwindow* window_;
+  std::vector<GLFWwindow*> windows_;
 };
