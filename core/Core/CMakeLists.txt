@@ -1,6 +1,3 @@
-# Create main application
-project(MainApplication)
-
 # Generates .d output (dependency of source file)
 add_compile_options(-MMD) # Use -MD if you want to see the compiler includes as well
 # Observe all compiler actions
@@ -12,18 +9,18 @@ set(CORE_SRC
 )
 
 # Add executable using the source files directly
-add_executable(MainApplication ${CORE_SRC})
+add_executable(EthosPlotting ${CORE_SRC})
 
 # Add include directory
-target_include_directories(MainApplication PUBLIC inc)
+target_include_directories(EthosPlotting PUBLIC inc)
 
 # Set the output directories for the executable
-set_target_properties(MainApplication PROPERTIES
+set_target_properties(EthosPlotting PROPERTIES
     RUNTIME_OUTPUT_DIRECTORY "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}"
     LIBRARY_OUTPUT_DIRECTORY "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}")
 
 # Set up third-party dependencies
-setup_third_party_dependencies(MainApplication)
+setup_third_party_dependencies(EthosPlotting)
 
 # Link project static libraries to the executable
-target_link_libraries(MainApplication PRIVATE ByteStreamInterface GuiDisplay)
+target_link_libraries(EthosPlotting PRIVATE ByteStreamInterface GuiDisplay)
