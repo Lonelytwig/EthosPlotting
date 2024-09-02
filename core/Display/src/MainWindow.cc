@@ -1,5 +1,3 @@
-
-
 #include <cmath>
 #include <iostream>
 #include <vector>
@@ -21,7 +19,7 @@ static void glfw_error_callback(int error, const char* description) {
 void GuiInterface::pollEvents() { glfwPollEvents(); }
 
 GuiInterface::GuiInterface() {
-  // Setup window_
+  // Setup GLFW window
   glfwSetErrorCallback(glfw_error_callback);
   if (!glfwInit()) exit(EXIT_FAILURE);
 
@@ -37,40 +35,75 @@ GuiInterface::GuiInterface() {
   glfwMakeContextCurrent(window_);
   glfwSwapInterval(1);  // Enable vsync
 
+  // Initialize Dear ImGui context
   IMGUI_CHECKVERSION();
   ImGui::CreateContext();
   ImPlot::CreateContext();
+
   ImGuiIO& io = ImGui::GetIO();
   io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;    // Enable Docking
   io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;  // Enable Viewports
 
+  // Setup Dear ImGui style
   ImGui::StyleColorsDark();
 
+  // Configure multi-viewport style adjustments
+  ImGuiStyle& style = ImGui::GetStyle();
+  if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable) {
+    style.WindowRounding = 0.0f;
+    style.Colors[ImGuiCol_WindowBg].w =
+        1.0f;  // Ensure the background is fully opaque
+  }
+
+  // Initialize Platform/Renderer bindings
   ImGui_ImplGlfw_InitForOpenGL(window_, true);
   const char* glsl_version = "#version 130";  // GLSL 130 for OpenGL 3.0
   ImGui_ImplOpenGL3_Init(glsl_version);
 }
 
 bool GuiInterface::render() {
-  /* If window should be closed, fall through */
+  // Check if the window should be closed
   if (glfwWindowShouldClose(window_)) {
     return false;
   }
-  ImGuiIO& io = ImGui::GetIO();
 
+  // Poll and handle events
   pollEvents();
 
+  // Start the ImGui frame
   ImGui_ImplOpenGL3_NewFrame();
   ImGui_ImplGlfw_NewFrame();
   ImGui::NewFrame();
 
+  // Create a main docking space
+  ImGuiViewport* viewport = ImGui::GetMainViewport();
+  ImGui::SetNextWindowPos(viewport->Pos);
+  ImGui::SetNextWindowSize(viewport->Size);
+  ImGui::SetNextWindowViewport(viewport->ID);
+
+  ImGuiWindowFlags window_flags =
+      ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoDocking;
+  window_flags |= ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse |
+                  ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove;
+  window_flags |=
+      ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus;
+
+  ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
+  ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
+  ImGui::Begin("DockSpace Demo", nullptr, window_flags);
+  ImGui::PopStyleVar(2);
+
+  // Create the dockspace
+  ImGuiID dockspace_id = ImGui::GetID("MyDockSpace");
+  ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f),
+                   ImGuiDockNodeFlags_PassthruCentralNode);
+
+  ImGui::End();
+
+  // Show the demo window
   ImGui::ShowDemoWindow();
-  // Create an ImGui window_
-  // Example window_ flags
-  // button_test();
 
-  // ImPlot::ShowDemoWindow(nullptr, "a");
-
+  // Render ImGui
   ImGui::Render();
   int display_w, display_h;
   glfwGetFramebufferSize(window_, &display_w, &display_h);
@@ -79,8 +112,8 @@ bool GuiInterface::render() {
   glClear(GL_COLOR_BUFFER_BIT);
   ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
-  // Update and Render additional Platform Windows
-  if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable) {
+  // Update and Render additional Platform Windows (multi-viewports)
+  if (ImGui::GetIO().ConfigFlags & ImGuiConfigFlags_ViewportsEnable) {
     GLFWwindow* backup_current_context = glfwGetCurrentContext();
     ImGui::UpdatePlatformWindows();
     ImGui::RenderPlatformWindowsDefault();
