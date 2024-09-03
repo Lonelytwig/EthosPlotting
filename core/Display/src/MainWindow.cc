@@ -68,6 +68,19 @@ void GuiInterface::registerWindow(const RenderCallback& callback) {
   render_callbacks_.push_back(callback);
 }
 
+void GuiInterface::unregisterWindow(const RenderCallback& callback) {
+  auto it = std::find_if(render_callbacks_.begin(), render_callbacks_.end(),
+                         [&](const RenderCallback& registered_callback) {
+                           // Compare the stored target type and target pointers
+                           return registered_callback.target<void()>() ==
+                                  callback.target<void()>();
+                         });
+
+  if (it != render_callbacks_.end()) {
+    render_callbacks_.erase(it);
+  }
+}
+
 bool GuiInterface::render() {
   if (glfwWindowShouldClose(window_)) {
     return false;
@@ -116,10 +129,10 @@ void GuiInterface::renderWindows() {
 
   ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
   ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
-  ImGui::Begin("DockSpace Demo", nullptr, window_flags);
+  ImGui::Begin("main window dockspace", nullptr, window_flags);
   ImGui::PopStyleVar(2);
 
-  ImGuiID dockspace_id = ImGui::GetID("MyDockSpace");
+  ImGuiID dockspace_id = ImGui::GetID("DockSpace");
   ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f),
                    ImGuiDockNodeFlags_PassthruCentralNode);
   ImGui::End();
