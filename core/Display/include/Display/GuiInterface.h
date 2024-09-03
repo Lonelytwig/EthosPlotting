@@ -4,30 +4,30 @@
 #include <GLFW/glfw3.h>
 
 #include <functional>
-#include <vector>
+#include <map>
+#include <string>
 
 #include "imgui.h"
 #include "imgui_impl_glfw.h"
 #include "imgui_impl_opengl3.h"
 #include "implot.h"
 
-
 // Function type alias for dynamic window rendering
 using RenderCallback = std::function<void()>;
 
 class GuiInterface {
  public:
-  // Static method to get the singleton instance
+  // Get the singleton instance
   static GuiInterface& getInstance();
 
   // Render the GUI, returns false if the window should close
   bool render();
 
-  // Register a new window callback
-  void registerWindow(const RenderCallback& callback);
+  // Register a new window callback with a unique name
+  void registerWindow(const std::string& name, const RenderCallback& callback);
 
-  // Unregister a window callback
-  void unregisterWindow(const RenderCallback& callback);
+  // Unregister a window callback by its unique name
+  void unregisterWindow(const std::string& name);
 
  private:
   // Private constructor to prevent direct instantiation
@@ -51,5 +51,6 @@ class GuiInterface {
   void closeWindowResources();
 
   GLFWwindow* window_;
-  std::vector<RenderCallback> render_callbacks_;
+  // Map of window names to callbacks
+  std::map<std::string, RenderCallback> render_callbacks_;
 };

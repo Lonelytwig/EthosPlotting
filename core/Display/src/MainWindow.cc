@@ -70,21 +70,15 @@ GuiInterface::~GuiInterface() { closeWindowResources(); }
 
 void GuiInterface::pollEvents() { glfwPollEvents(); }
 
-void GuiInterface::registerWindow(const RenderCallback& callback) {
-  render_callbacks_.push_back(callback);
+void GuiInterface::registerWindow(const std::string& name,
+                                  const RenderCallback& callback) {
+  render_callbacks_[name] =
+      callback;  // Store the callback with its associated name
 }
 
-void GuiInterface::unregisterWindow(const RenderCallback& callback) {
-  auto it = std::find_if(render_callbacks_.begin(), render_callbacks_.end(),
-                         [&](const RenderCallback& registered_callback) {
-                           // Compare the stored target type and target pointers
-                           return registered_callback.target<void()>() ==
-                                  callback.target<void()>();
-                         });
-
-  if (it != render_callbacks_.end()) {
-    render_callbacks_.erase(it);
-  }
+void GuiInterface::unregisterWindow(const std::string& name) {
+  render_callbacks_.erase(
+      name);  // Remove the callback associated with the given name
 }
 
 bool GuiInterface::render() {
@@ -143,8 +137,11 @@ void GuiInterface::renderWindows() {
                    ImGuiDockNodeFlags_PassthruCentralNode);
   ImGui::End();
 
-  for (const auto& callback : render_callbacks_) {
-    callback();
+  // Render all registered windows
+  for (const auto& [name, callback] : render_callbacks_) {
+    ImGui::Begin(name.c_str());
+    callback();  // Execute the callback
+    ImGui::End();
   }
 }
 

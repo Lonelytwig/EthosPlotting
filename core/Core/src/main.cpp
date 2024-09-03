@@ -7,7 +7,44 @@
 #include <thread>
 
 #include "ByteStream/ByteStreamInterface.h"
+#include "Display/CustomButton.h"
 #include "Display/GuiInterface.h"
+#include "Display/StyleManager.h"
+
+int z = 0;  // Dynamic window counter
+CustomButton button("WOWAS");
+// Adjustments window callback function for the button
+void adjustmentsWindow() {
+  // Color adjustment
+  ImVec4 color_normal = button.getNormalColor();
+  ImVec4 color_hover = button.getHoverColor();
+  ImVec4 color_active = button.getActiveColor();
+
+  if (ImGui::ColorEdit4("Normal Color", (float*)&color_normal)) {
+    button.setButtonColor(color_normal, color_hover, color_active);
+  }
+  if (ImGui::ColorEdit4("Hover Color", (float*)&color_hover)) {
+    button.setButtonColor(color_normal, color_hover, color_active);
+  }
+  if (ImGui::ColorEdit4("Active Color", (float*)&color_active)) {
+    button.setButtonColor(color_normal, color_hover, color_active);
+  }
+
+  // Size adjustment
+  ImVec2 size = button.getSize();
+  if (ImGui::SliderFloat2("Button Size", (float*)&size, 50.0f, 200.0f)) {
+    button.setButtonSize(size);
+  }
+}
+
+// Define and register a new ImGui window for dynamic content
+void customWindow(int id) {
+  std::string buttonName = "This is Dynamic Button " + std::to_string(id);
+  ImGui::Text(buttonName.c_str());
+  if (ImGui::Button(buttonName.c_str())) {
+    std::cout << buttonName << " pressed!" << std::endl;
+  }
+}
 
 int main(int, char**) {
   // Initialize ByteStreamInterface with socket configuration
@@ -18,39 +55,47 @@ int main(int, char**) {
 
   uint8_t i = 0;
   uint8_t x = 0;
-  int z = 0;
-  std::vector<RenderCallback> callbacks;  // Store callbacks to unregister later
+
+  // GuiInterface::getInstance().registerWindow("adjustmentsWindow",
+  //                                            adjustmentsWindow);
+  StyleManager styler;
+  GuiInterface::getInstance().registerWindow(
+      "styleAdjustmentWindow",
+      std::bind(&StyleManager::showStyleAdjustmentWindow, &styler));
+  GuiInterface::getInstance().registerWindow(
+      "button to render", std::bind(&CustomButton::render, &button));
+
+  bool buttons_visible = false;
+  const uint8_t cycle_limit = 50;  // Number of iterations per cycle
+  uint8_t cycle_count =
+      0;  // Counter to control appearance/disappearance cycles
+
   // Main loop to render the GUI
   while (GuiInterface::getInstance().render()) {
-    if (i < 10) {
-      // Create a unique function object for each window registration
-      RenderCallback callback = [z = z++] {
-        std::string name("Dynamic Window " + std::to_string(z));
-        ImGui::Begin(name.c_str());
-        ImGui::Text("This is a dynamically added window.");
-        if (ImGui::Button("Press Me")) {
-          std::cout << "Dynamic button pressed!" << std::endl;
-        }
-        ImGui::End();
-      };
-
-      // Register the dynamic window with the GUI interface
-      GuiInterface::getInstance().registerWindow(callback);
-      callbacks.push_back(
-          callback);  // Keep track of the callback for later removal
-      i++;
-    } else if (i >= 10 && x < 10) {
-      // Unregister the previously stored callback
-      GuiInterface::getInstance().unregisterWindow(callbacks[x]);
-      x++;
-      if (x == 10) {
-        i = 0;
-        x = 0;
-        callbacks.clear();  // Clear the callback list once all have been
-                            // unregistered
+    // Manage cyclic appearance/disappearance of buttons
+    if (cycle_count == 0 && !buttons_visible) {
+      // Register the buttons
+      for (int id = 0; id < 5; ++id) {
+        std::string button_name = "Dynamic Button " + std::to_string(id);
+        GuiInterface::getInstance().registerWindow(
+            button_name, [id]() { customWindow(id); });
       }
+      buttons_visible = true;
+    } else if (cycle_count == cycle_limit && buttons_visible) {
+      // Unregister the buttons
+      for (int id = 0; id < 5; ++id) {
+        std::string button_name = "Dynamic Button " + std::to_string(id);
+        GuiInterface::getInstance().unregisterWindow(button_name);
+      }
+      buttons_visible = false;
+      cycle_count = 0;  // Reset cycle count to start again
     }
-    std::this_thread::sleep_for(std::chrono::milliseconds(100));
+
+    // Increment the cycle count
+    ++cycle_count;
+
+    // Simulate a delay for the condition
+    ++i;
   }
 
   return 0;
