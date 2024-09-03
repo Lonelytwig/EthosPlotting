@@ -6,7 +6,6 @@
 
 #include <vector>
 
-
 class GuiInterface {
  public:
   GuiInterface();
@@ -34,5 +33,5 @@ class GuiInterface {
    */
   void CloseWindowResources();
 
-  std::vector<GLFWwindow*> windows_;
+  GLFWwindow* window_;
 };
