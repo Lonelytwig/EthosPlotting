@@ -17,8 +17,8 @@ using RenderCallback = std::function<void()>;
 
 class GuiInterface {
  public:
-  GuiInterface();
-  ~GuiInterface();
+  // Static method to get the singleton instance
+  static GuiInterface& getInstance();
 
   // Render the GUI, returns false if the window should close
   bool render();
@@ -30,6 +30,14 @@ class GuiInterface {
   void unregisterWindow(const RenderCallback& callback);
 
  private:
+  // Private constructor to prevent direct instantiation
+  GuiInterface();
+  ~GuiInterface();
+
+  // Delete copy constructor and assignment operator to prevent copies
+  GuiInterface(const GuiInterface&) = delete;
+  GuiInterface& operator=(const GuiInterface&) = delete;
+
   // Poll for user input events
   void pollEvents();
 

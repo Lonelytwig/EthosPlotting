@@ -16,16 +16,12 @@ int main(int, char**) {
                                           .send_ip = "127.0.0.1",
                                           .send_port = 8081});
 
-  // Initialize the GUI window
-  GuiInterface window;
-
   uint8_t i = 0;
   uint8_t x = 0;
   int z = 0;
   std::vector<RenderCallback> callbacks;  // Store callbacks to unregister later
-
   // Main loop to render the GUI
-  while (window.render()) {
+  while (GuiInterface::getInstance().render()) {
     if (i < 10) {
       // Create a unique function object for each window registration
       RenderCallback callback = [z = z++] {
@@ -39,13 +35,13 @@ int main(int, char**) {
       };
 
       // Register the dynamic window with the GUI interface
-      window.registerWindow(callback);
+      GuiInterface::getInstance().registerWindow(callback);
       callbacks.push_back(
           callback);  // Keep track of the callback for later removal
       i++;
     } else if (i >= 10 && x < 10) {
       // Unregister the previously stored callback
-      window.unregisterWindow(callbacks[x]);
+      GuiInterface::getInstance().unregisterWindow(callbacks[x]);
       x++;
       if (x == 10) {
         i = 0;

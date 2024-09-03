@@ -23,4 +23,4 @@ set_target_properties(EthosPlotting PROPERTIES
 setup_third_party_dependencies(EthosPlotting)
 
 # Link project static libraries to the executable
-target_link_libraries(EthosPlotting PRIVATE ByteStreamInterface GuiDisplay)
+target_link_libraries(EthosPlotting PUBLIC ByteStreamInterface GuiDisplay)

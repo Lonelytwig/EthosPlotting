@@ -1,8 +1,6 @@
-#include <cmath>
 #include <iostream>
 #include <vector>
 
-// Project includes
 #include "Display/GuiInterface.h"
 
 // Error callback function for GLFW
@@ -10,6 +8,14 @@ static void glfw_error_callback(int error, const char* description) {
   std::cerr << "GLFW Error " << error << ": " << description << std::endl;
 }
 
+// Static method to get the singleton instance
+GuiInterface& GuiInterface::getInstance() {
+  static GuiInterface
+      instance;  // Guaranteed to be destroyed and instantiated on first use
+  return instance;
+}
+
+// Private constructor
 GuiInterface::GuiInterface() {
   // Setup GLFW
   glfwSetErrorCallback(glfw_error_callback);
@@ -39,8 +45,6 @@ GuiInterface::GuiInterface() {
   ImGui_ImplOpenGL3_Init(glsl_version);
 }
 
-GuiInterface::~GuiInterface() { closeWindowResources(); }
-
 void GuiInterface::createWindow(int width, int height, const char* title) {
   glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
   glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
@@ -61,6 +65,8 @@ void GuiInterface::createWindow(int width, int height, const char* title) {
     exit(EXIT_FAILURE);
   }
 }
+
+GuiInterface::~GuiInterface() { closeWindowResources(); }
 
 void GuiInterface::pollEvents() { glfwPollEvents(); }
 
