@@ -124,7 +124,7 @@ void SetupDocking() {
                    ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize |
                    ImGuiWindowFlags_NoMove |
                    ImGuiWindowFlags_NoBringToFrontOnFocus |
-                   ImGuiWindowFlags_NoNavFocus | ImGuiWindowFlags_NoBackground);
+                   ImGuiWindowFlags_NoNavFocus);
 
   ImGuiID dockspace_id = ImGui::GetID("MyDockspace");
   ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), ImGuiDockNodeFlags_None);
@@ -143,10 +143,9 @@ void SetupDocking() {
 
     // Split the dockspace into left and right zones (50% for left, 50% for
     // right)
-    ImGuiID dock_id_right;  // The remaining part on the right
-
     ImGuiID dock_id_left = ImGui::DockBuilderSplitNode(
-        dockspace_id, ImGuiDir_Left, 0.5f, nullptr, &dock_id_right);
+        dockspace_id, ImGuiDir_Left, 0.5f, nullptr, &dockspace_id);
+    ImGuiID dock_id_right = dockspace_id;  // The remaining part on the right
 
     // Split the left dockspace vertically into three zones
     ImGuiID dock_id_top = ImGui::DockBuilderSplitNode(
@@ -176,6 +175,8 @@ void SetupDocking() {
 }
 
 void GuiInterface::renderWindows() {
+  // Render the menu bar at the top
+  renderMenuBars();
   SetupDocking();
 
   // Begin creating the first window
