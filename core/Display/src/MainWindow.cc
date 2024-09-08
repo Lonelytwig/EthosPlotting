@@ -111,38 +111,96 @@ bool GuiInterface::render() {
   return true;
 }
 
-void GuiInterface::renderWindows() {
+void SetupDocking() {
+  // Get the main viewport
   ImGuiViewport* viewport = ImGui::GetMainViewport();
-  ImGui::SetNextWindowPos(viewport->Pos);
-  ImGui::SetNextWindowSize(viewport->Size);
+  ImGui::SetNextWindowPos(viewport->WorkPos);
+  ImGui::SetNextWindowSize(viewport->WorkSize);
   ImGui::SetNextWindowViewport(viewport->ID);
 
-  ImGuiWindowFlags window_flags =
-      ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoDocking;
-  window_flags |= ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse |
-                  ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove;
-  window_flags |=
-      ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus;
+  // Create a window that serves as the main dock space
+  ImGui::Begin("DockSpace Window", nullptr,
+               ImGuiWindowFlags_NoDocking | ImGuiWindowFlags_NoTitleBar |
+                   ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize |
+                   ImGuiWindowFlags_NoMove |
+                   ImGuiWindowFlags_NoBringToFrontOnFocus |
+                   ImGuiWindowFlags_NoNavFocus | ImGuiWindowFlags_NoBackground);
 
-  ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
-  ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
-  ImGui::Begin("main window dockspace", nullptr, window_flags);
-  ImGui::PopStyleVar(2);
+  ImGuiID dockspace_id = ImGui::GetID("MyDockspace");
+  ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), ImGuiDockNodeFlags_None);
 
-  ImGuiID dockspace_id = ImGui::GetID("DockSpace");
-  ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f),
-                   ImGuiDockNodeFlags_PassthruCentralNode);
+  // Setup the dock nodes only if not already set
+  static bool initialized = false;
+  if (!initialized) {
+    initialized = true;
 
-  // Render the menu bar at the top
-  renderMenuBars();
+    // Remove any existing layout
+    ImGui::DockBuilderRemoveNode(dockspace_id);  // Remove existing layout
+    ImGui::DockBuilderAddNode(
+        dockspace_id, ImGuiDockNodeFlags_DockSpace);  // Create root node
+    ImGui::DockBuilderSetNodeSize(dockspace_id,
+                                  viewport->WorkSize);  // Set root node size
 
-  // Render all registered windows
-  for (const auto& [name, callback] : render_callbacks_) {
-    ImGui::SetNextWindowDockID(dockspace_id, ImGuiCond_FirstUseEver);
-    ImGui::Begin(name.c_str());
-    callback();
-    ImGui::End();
+    // Split the dockspace into left and right zones (50% for left, 50% for
+    // right)
+    ImGuiID dock_id_right;  // The remaining part on the right
+
+    ImGuiID dock_id_left = ImGui::DockBuilderSplitNode(
+        dockspace_id, ImGuiDir_Left, 0.5f, nullptr, &dock_id_right);
+
+    // Split the left dockspace vertically into three zones
+    ImGuiID dock_id_top = ImGui::DockBuilderSplitNode(
+        dock_id_left, ImGuiDir_Up, 0.33f, nullptr, &dock_id_left);
+    ImGuiID dock_id_middle = ImGui::DockBuilderSplitNode(
+        dock_id_left, ImGuiDir_Up, 0.5f, nullptr, &dock_id_left);
+    ImGuiID dock_id_bottom = dock_id_left;  // Remaining space goes to bottom
+
+    // Split the right dockspace into two even zones horizontally
+    ImGuiID dock_id_right_top = ImGui::DockBuilderSplitNode(
+        dock_id_right, ImGuiDir_Up, 0.5f, nullptr, &dock_id_right);
+    ImGuiID dock_id_right_bottom =
+        dock_id_right;  // Remaining space goes to bottom
+
+    // Dock windows into the designated dock nodes
+    ImGui::DockBuilderDockWindow("Window 1", dock_id_top);
+    ImGui::DockBuilderDockWindow("Window 2", dock_id_middle);
+    ImGui::DockBuilderDockWindow("Window 3", dock_id_bottom);
+    ImGui::DockBuilderDockWindow("Horizontal Window 1", dock_id_right_top);
+    ImGui::DockBuilderDockWindow("Horizontal Window 2", dock_id_right_bottom);
+
+    // Finalize the dock layout
+    ImGui::DockBuilderFinish(dockspace_id);
   }
+
+  ImGui::End();  // End of the main docking space window
+}
+
+void GuiInterface::renderWindows() {
+  SetupDocking();
+
+  // Begin creating the first window
+  ImGui::Begin("Window 1");
+  ImGui::Text("This is Window 1");
+  ImGui::End();
+
+  // Begin creating the second window
+  ImGui::Begin("Window 2");
+  ImGui::Text("This is Window 2");
+  ImGui::End();
+
+  // Begin creating the third window
+  ImGui::Begin("Window 3");
+  ImGui::Text("This is Window 3");
+  ImGui::End();
+
+  // Begin creating the first horizontal window
+  ImGui::Begin("Horizontal Window 1");
+  ImGui::Text("This is Horizontal Window 1");
+  ImGui::End();
+
+  // Begin creating the second horizontal window
+  ImGui::Begin("Horizontal Window 2");
+  ImGui::Text("This is Horizontal Window 2");
   ImGui::End();
 }
 
