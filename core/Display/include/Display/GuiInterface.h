@@ -7,6 +7,7 @@
 #include <map>
 #include <string>
 
+#include "Display/StyleManager.h"
 #include "imgui.h"
 #include "imgui_impl_glfw.h"
 #include "imgui_impl_opengl3.h"
@@ -25,6 +26,7 @@ class GuiInterface {
 
   // Register a new window callback with a unique name
   void registerWindow(const std::string& name, const RenderCallback& callback);
+  void registerWindow(const RenderCallback& callback);
 
   // Unregister a window callback by its unique name
   void unregisterWindow(const std::string& name);
@@ -47,10 +49,15 @@ class GuiInterface {
   // Render all registered windows
   void renderWindows();
 
+  void renderMenuBars();
+
   // Tear down resources when closing the window
   void closeWindowResources();
 
   GLFWwindow* window_;
+
+  StyleManager styler_;
+
   // Map of window names to callbacks
   std::map<std::string, RenderCallback> render_callbacks_;
 };

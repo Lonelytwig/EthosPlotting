@@ -91,7 +91,7 @@ target_link_libraries(DisplayComponents PRIVATE
 add_library(GuiDisplay STATIC
   src/MainWindow.cc
   src/CustomButton.cc
-  src/ModifyStyle.cc)
+  src/StyleManager.cc)
 
 # Include necessary directories for GuiDisplay
 target_include_directories(GuiDisplay PUBLIC include)

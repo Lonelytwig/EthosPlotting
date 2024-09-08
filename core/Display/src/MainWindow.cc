@@ -135,6 +135,10 @@ void GuiInterface::renderWindows() {
   ImGuiID dockspace_id = ImGui::GetID("DockSpace");
   ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f),
                    ImGuiDockNodeFlags_PassthruCentralNode);
+
+  // Render the menu bar at the top
+  renderMenuBars();
+
   ImGui::End();
 
   // Render all registered windows
@@ -143,6 +147,12 @@ void GuiInterface::renderWindows() {
     callback();  // Execute the callback
     ImGui::End();
   }
+}
+
+// Function to render menu bars
+void GuiInterface::renderMenuBars() {
+  // Example: Render the Style menu bar
+  styler_.render();
 }
 
 void GuiInterface::closeWindowResources() {

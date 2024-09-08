@@ -1,30 +1,25 @@
 #pragma once
 #include <string>
-#include <vector>
 
 #include "imgui.h"
 
-
 class StyleManager {
  public:
-  // Constructor: Load the default style
-  StyleManager();
-
-  // Show the style adjustment window
-  void showStyleAdjustmentWindow();
-
-  // Apply a predefined style preset
-  void applyPreset(const std::string& presetName);
-
-  // Save the current style configuration
-  void saveCurrentStyle();
+  void render();
 
  private:
   ImGuiStyle saved_style_;  // Stores the last configured style
 
-  // Method to apply the default Modern Green style
+  void showStyleAdjustmentWindow();
+  // Show the style adjustment window
+  void showMainMenuBar();
+
   void applyModernGreenStyle();
 
-  // Helper function to apply a style
-  void applyStyle(const ImGuiStyle& style);
+  void saveStyleToFile(const std::string& filename);
+  void loadStyleFromFile(const std::string& filename);
+
+  bool show_style_adjustment_window_ = false;
+
+  const char* save_style_file_name_ = "style.cfg";
 };
