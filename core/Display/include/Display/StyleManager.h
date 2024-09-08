@@ -45,6 +45,10 @@ class StyleManager {
    */
   void loadStyleFromFile(const std::string& filename);
 
+  void applyStyle(const ImGuiStyle& style);
+
+  void saveCustomStyle(const std::string& style_name);
+
   bool show_style_adjustment_window_ = false;
 
   const char* save_style_file_name_ = "style.cfg";
