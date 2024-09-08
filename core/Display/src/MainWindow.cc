@@ -141,18 +141,33 @@ void SetupDocking() {
     ImGui::DockBuilderSetNodeSize(dockspace_id,
                                   viewport->WorkSize);  // Set root node size
 
-    // Split the dockspace into left and right zones (50% for left, 50% for
-    // right)
+    // Split the dockspace into top and bottom zones
+    ImGuiID dock_id_top_bottom =
+        ImGui::DockBuilderSplitNode(dockspace_id, ImGuiDir_Up, 0.8f, nullptr,
+                                    &dockspace_id);  // 80% top, 20% bottom
+    ImGuiID dock_id_bottom = dockspace_id;  // Remaining part at the bottom
+
+    // Further split the top zone into a small top region and a larger central
+    // region
+    ImGuiID dock_id_top = ImGui::DockBuilderSplitNode(
+        dock_id_top_bottom, ImGuiDir_Up, 0.2f, nullptr,
+        &dock_id_top_bottom);  // 20% for top window
+    ImGuiID dock_id_center =
+        dock_id_top_bottom;  // Remaining space in the center
+
+    // Further split the central region into left and right zones
     ImGuiID dock_id_left = ImGui::DockBuilderSplitNode(
-        dockspace_id, ImGuiDir_Left, 0.5f, nullptr, &dockspace_id);
-    ImGuiID dock_id_right = dockspace_id;  // The remaining part on the right
+        dock_id_center, ImGuiDir_Left, 0.5f, nullptr,
+        &dock_id_center);                    // 50% left, 50% right
+    ImGuiID dock_id_right = dock_id_center;  // Remaining part on the right
 
     // Split the left dockspace vertically into three zones
-    ImGuiID dock_id_top = ImGui::DockBuilderSplitNode(
+    ImGuiID dock_id_left_top = ImGui::DockBuilderSplitNode(
         dock_id_left, ImGuiDir_Up, 0.33f, nullptr, &dock_id_left);
-    ImGuiID dock_id_middle = ImGui::DockBuilderSplitNode(
+    ImGuiID dock_id_left_middle = ImGui::DockBuilderSplitNode(
         dock_id_left, ImGuiDir_Up, 0.5f, nullptr, &dock_id_left);
-    ImGuiID dock_id_bottom = dock_id_left;  // Remaining space goes to bottom
+    ImGuiID dock_id_left_bottom =
+        dock_id_left;  // Remaining space goes to bottom
 
     // Split the right dockspace into two even zones horizontally
     ImGuiID dock_id_right_top = ImGui::DockBuilderSplitNode(
@@ -161,11 +176,14 @@ void SetupDocking() {
         dock_id_right;  // Remaining space goes to bottom
 
     // Dock windows into the designated dock nodes
-    ImGui::DockBuilderDockWindow("Window 1", dock_id_top);
-    ImGui::DockBuilderDockWindow("Window 2", dock_id_middle);
-    ImGui::DockBuilderDockWindow("Window 3", dock_id_bottom);
+    ImGui::DockBuilderDockWindow("Top Window", dock_id_top);  // New top window
+    ImGui::DockBuilderDockWindow("Window 1", dock_id_left_top);
+    ImGui::DockBuilderDockWindow("Window 2", dock_id_left_middle);
+    ImGui::DockBuilderDockWindow("Window 3", dock_id_left_bottom);
     ImGui::DockBuilderDockWindow("Horizontal Window 1", dock_id_right_top);
     ImGui::DockBuilderDockWindow("Horizontal Window 2", dock_id_right_bottom);
+    ImGui::DockBuilderDockWindow("Bottom Window",
+                                 dock_id_bottom);  // Existing bottom window
 
     // Finalize the dock layout
     ImGui::DockBuilderFinish(dockspace_id);
@@ -178,6 +196,11 @@ void GuiInterface::renderWindows() {
   // Render the menu bar at the top
   renderMenuBars();
   SetupDocking();
+
+  // Begin creating the new top window
+  ImGui::Begin("Top Window");
+  ImGui::Text("This is the Top Window");
+  ImGui::End();
 
   // Begin creating the first window
   ImGui::Begin("Window 1");
@@ -202,6 +225,11 @@ void GuiInterface::renderWindows() {
   // Begin creating the second horizontal window
   ImGui::Begin("Horizontal Window 2");
   ImGui::Text("This is Horizontal Window 2");
+  ImGui::End();
+
+  // Begin creating the bottom window
+  ImGui::Begin("Bottom Window");
+  ImGui::Text("This is the Bottom Window");
   ImGui::End();
 }
 
