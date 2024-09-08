@@ -8,10 +8,13 @@
 
 std::map<std::string, ImGuiStyle> saved_styles_;  // To store saved styles
 
-void StyleManager::showMainMenuBar() {
+void StyleManager::ShowMainMenuBar() {
   if (ImGui::BeginMainMenuBar()) {
     if (ImGui::BeginMenu("Style")) {
       GeneralStyleAdjustments();
+      if (ImGui::MenuItem("Adjust Scaling")) {
+        show_scaling_adjustment_window_ = true;
+      }
       ImGui::EndMenu();
     }
     ImGui::EndMainMenuBar();
@@ -20,48 +23,44 @@ void StyleManager::showMainMenuBar() {
 
 void StyleManager::GeneralStyleAdjustments() {
   if (ImGui::BeginMenu("Change Style")) {
-    // Custom Style Editor Button
     if (ImGui::MenuItem("Custom")) {
-      show_style_adjustment_window_ = true;  // Show the adjustment window
+      show_style_adjustment_window_ = true;
     }
 
     // Dynamically load saved styles as menu items
     for (const auto& [name, style] : saved_styles_) {
       if (ImGui::MenuItem(name.c_str())) {
-        applyStyle(style);  // Apply the saved style
+        ImGui::GetStyle() = style;
       }
     }
 
     // Default Style Presets
     if (ImGui::MenuItem("Classic")) {
       ImGui::StyleColorsClassic();
-      saveStyleToFile(save_style_file_name_);  // Save the style to file
+      SaveStyleToFile(save_style_file_name_);
     }
     if (ImGui::MenuItem("Dark")) {
       ImGui::StyleColorsDark();
-      saveStyleToFile(save_style_file_name_);  // Save the style to file
+      SaveStyleToFile(save_style_file_name_);
     }
     if (ImGui::MenuItem("Light")) {
       ImGui::StyleColorsLight();
-      saveStyleToFile(save_style_file_name_);  // Save the style to file
+      SaveStyleToFile(save_style_file_name_);
     }
-
-    // Custom Modern Green Style Button
+    // Custom Style Presets
     if (ImGui::MenuItem("Modern Green")) {
-      applyModernGreenStyle();
-      saveStyleToFile(save_style_file_name_);  // Save the style to file
+      ApplyModernGreenStyle();
+      SaveStyleToFile(save_style_file_name_);
     }
 
     ImGui::EndMenu();
   }
 }
 
-void StyleManager::showStyleAdjustmentWindow() {
+void StyleManager::ShowStyleAdjustmentWindow() {
   if (show_style_adjustment_window_) {
     ImGui::Begin("Style Adjustment", &show_style_adjustment_window_);
     ImGuiStyle& style = ImGui::GetStyle();
-    ImGuiIO& io =
-        ImGui::GetIO();  // Get the ImGuiIO object to adjust font scaling
 
     // Adjust overall colors
     ImGui::Text("Colors");
@@ -84,39 +83,47 @@ void StyleManager::showStyleAdjustmentWindow() {
     ImGui::SliderFloat2("Item Spacing", (float*)&style.ItemSpacing, 0.0f,
                         20.0f);
 
-    // Adjust font size
-    ImGui::Text("Text Size");
-    ImGui::SliderFloat("Font Scale", &io.FontGlobalScale, 0.5f, 2.0f,
-                       "%.1f");  // Slider for text size
-
     // Apply or Reset Buttons
     if (ImGui::Button("Apply")) {
-      saveStyleToFile(save_style_file_name_);  // Save to file
+      SaveStyleToFile(save_style_file_name_);
     }
     ImGui::SameLine();
     if (ImGui::Button("Reset")) {
-      ImGui::StyleColorsDark();                // Reset to default style
-      saveStyleToFile(save_style_file_name_);  // Save the reset style to file
+      ImGui::StyleColorsDark();  // Reset to default style
+      SaveStyleToFile(save_style_file_name_);
     }
 
     // Save custom style button
     static char style_name[128] = "";
     ImGui::InputText("Style Name", style_name, IM_ARRAYSIZE(style_name));
+    // Save the current style with the given name
     if (ImGui::Button("Save Custom Style")) {
-      saveCustomStyle(
-          style_name);  // Save the current style with the given name
+      SaveCustomStyle(style_name);
     }
 
     ImGui::End();
   }
 }
 
-void StyleManager::saveCustomStyle(const std::string& style_name) {
+void StyleManager::ShowScalingAdjustmentWindow() {
+  if (show_scaling_adjustment_window_) {
+    ImGui::Begin("Scaling Adjustment", &show_scaling_adjustment_window_);
+    ImGuiIO& io = ImGui::GetIO();
+
+    // Adjust font size
+    ImGui::Text("Text Size");
+    // Slider for text size
+    ImGui::SliderFloat("Font Scale", &io.FontGlobalScale, 0.5f, 2.0f, "%.1f");
+
+    ImGui::End();
+  }
+}
+
+void StyleManager::SaveCustomStyle(const std::string& style_name) {
   if (style_name.empty()) return;  // Do not save if the style name is empty
 
   ImGuiStyle& current_style = ImGui::GetStyle();
-  saved_styles_[style_name] =
-      current_style;  // Save the current style in memory
+  saved_styles_[style_name] = current_style;
 
   // Append the new style to the file
   std::ofstream ofs(save_style_file_name_, std::ios::app | std::ios::binary);
@@ -135,7 +142,7 @@ void StyleManager::saveCustomStyle(const std::string& style_name) {
   ofs.close();
 }
 
-void StyleManager::loadStyleFromFile(const std::string& filename) {
+void StyleManager::LoadStyleFromFile(const std::string& filename) {
   std::ifstream ifs(filename, std::ios::in | std::ios::binary);
   if (!ifs) {
     std::cerr << "No style configuration file found, loading default."
@@ -170,11 +177,7 @@ void StyleManager::loadStyleFromFile(const std::string& filename) {
   ifs.close();
 }
 
-void StyleManager::applyStyle(const ImGuiStyle& style) {
-  ImGui::GetStyle() = style;  // Apply the given style
-}
-
-void StyleManager::saveStyleToFile(const std::string& filename) {
+void StyleManager::SaveStyleToFile(const std::string& filename) {
   std::ofstream ofs(filename, std::ios::out | std::ios::binary);
   if (!ofs) {
     std::cerr << "Failed to open file for writing: " << filename << std::endl;
@@ -193,17 +196,18 @@ void StyleManager::saveStyleToFile(const std::string& filename) {
   ofs.close();
 }
 
-void StyleManager::render() {
+void StyleManager::Render() {
   static bool startup = true;
   if (startup) {
-    loadStyleFromFile(save_style_file_name_);
+    LoadStyleFromFile(save_style_file_name_);
     startup = false;
   }
-  showMainMenuBar();
-  showStyleAdjustmentWindow();
+  ShowMainMenuBar();
+  ShowStyleAdjustmentWindow();
+  ShowScalingAdjustmentWindow();
 }
 
-void StyleManager::applyModernGreenStyle() {
+void StyleManager::ApplyModernGreenStyle() {
   ImGuiStyle& style = ImGui::GetStyle();
 
   // Rounded corners and padding for a modern feel

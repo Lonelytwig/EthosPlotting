@@ -152,7 +152,7 @@ void GuiInterface::renderWindows() {
 // Function to render menu bars
 void GuiInterface::renderMenuBars() {
   // Example: Render the Style menu bar
-  styler_.render();
+  styler_.Render();
 }
 
 void GuiInterface::closeWindowResources() {
