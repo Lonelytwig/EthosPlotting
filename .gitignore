@@ -2,3 +2,4 @@ build/
 app/
 python_env/
 imgui.ini
+style.cfg
