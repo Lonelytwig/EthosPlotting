@@ -11,44 +11,48 @@ std::map<std::string, ImGuiStyle> saved_styles_;  // To store saved styles
 void StyleManager::showMainMenuBar() {
   if (ImGui::BeginMainMenuBar()) {
     if (ImGui::BeginMenu("Style")) {
-      if (ImGui::BeginMenu("Change Style")) {
-        // Custom Style Editor Button
-        if (ImGui::MenuItem("Custom")) {
-          show_style_adjustment_window_ = true;  // Show the adjustment window
-        }
-
-        // Dynamically load saved styles as menu items
-        for (const auto& [name, style] : saved_styles_) {
-          if (ImGui::MenuItem(name.c_str())) {
-            applyStyle(style);  // Apply the saved style
-          }
-        }
-
-        // Default Style Presets
-        if (ImGui::MenuItem("Classic")) {
-          ImGui::StyleColorsClassic();
-          saveStyleToFile(save_style_file_name_);  // Save the style to file
-        }
-        if (ImGui::MenuItem("Dark")) {
-          ImGui::StyleColorsDark();
-          saveStyleToFile(save_style_file_name_);  // Save the style to file
-        }
-        if (ImGui::MenuItem("Light")) {
-          ImGui::StyleColorsLight();
-          saveStyleToFile(save_style_file_name_);  // Save the style to file
-        }
-
-        // Custom Modern Green Style Button
-        if (ImGui::MenuItem("Modern Green")) {
-          applyModernGreenStyle();
-          saveStyleToFile(save_style_file_name_);  // Save the style to file
-        }
-
-        ImGui::EndMenu();
-      }
+      GeneralStyleAdjustments();
       ImGui::EndMenu();
     }
     ImGui::EndMainMenuBar();
+  }
+}
+
+void StyleManager::GeneralStyleAdjustments() {
+  if (ImGui::BeginMenu("Change Style")) {
+    // Custom Style Editor Button
+    if (ImGui::MenuItem("Custom")) {
+      show_style_adjustment_window_ = true;  // Show the adjustment window
+    }
+
+    // Dynamically load saved styles as menu items
+    for (const auto& [name, style] : saved_styles_) {
+      if (ImGui::MenuItem(name.c_str())) {
+        applyStyle(style);  // Apply the saved style
+      }
+    }
+
+    // Default Style Presets
+    if (ImGui::MenuItem("Classic")) {
+      ImGui::StyleColorsClassic();
+      saveStyleToFile(save_style_file_name_);  // Save the style to file
+    }
+    if (ImGui::MenuItem("Dark")) {
+      ImGui::StyleColorsDark();
+      saveStyleToFile(save_style_file_name_);  // Save the style to file
+    }
+    if (ImGui::MenuItem("Light")) {
+      ImGui::StyleColorsLight();
+      saveStyleToFile(save_style_file_name_);  // Save the style to file
+    }
+
+    // Custom Modern Green Style Button
+    if (ImGui::MenuItem("Modern Green")) {
+      applyModernGreenStyle();
+      saveStyleToFile(save_style_file_name_);  // Save the style to file
+    }
+
+    ImGui::EndMenu();
   }
 }
 
@@ -56,6 +60,8 @@ void StyleManager::showStyleAdjustmentWindow() {
   if (show_style_adjustment_window_) {
     ImGui::Begin("Style Adjustment", &show_style_adjustment_window_);
     ImGuiStyle& style = ImGui::GetStyle();
+    ImGuiIO& io =
+        ImGui::GetIO();  // Get the ImGuiIO object to adjust font scaling
 
     // Adjust overall colors
     ImGui::Text("Colors");
@@ -77,6 +83,11 @@ void StyleManager::showStyleAdjustmentWindow() {
                         20.0f);
     ImGui::SliderFloat2("Item Spacing", (float*)&style.ItemSpacing, 0.0f,
                         20.0f);
+
+    // Adjust font size
+    ImGui::Text("Text Size");
+    ImGui::SliderFloat("Font Scale", &io.FontGlobalScale, 0.5f, 2.0f,
+                       "%.1f");  // Slider for text size
 
     // Apply or Reset Buttons
     if (ImGui::Button("Apply")) {

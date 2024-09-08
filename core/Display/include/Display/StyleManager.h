@@ -49,6 +49,8 @@ class StyleManager {
 
   void saveCustomStyle(const std::string& style_name);
 
+  void GeneralStyleAdjustments();
+
   bool show_style_adjustment_window_ = false;
 
   const char* save_style_file_name_ = "style.cfg";
