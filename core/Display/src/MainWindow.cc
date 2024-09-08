@@ -136,14 +136,14 @@ void GuiInterface::renderWindows() {
   // Render the menu bar at the top
   renderMenuBars();
 
-  ImGui::End();
-
   // Render all registered windows
   for (const auto& [name, callback] : render_callbacks_) {
+    ImGui::SetNextWindowDockID(dockspace_id, ImGuiCond_FirstUseEver);
     ImGui::Begin(name.c_str());
     callback();
     ImGui::End();
   }
+  ImGui::End();
 }
 
 void GuiInterface::renderMenuBars() { styler_.Render(); }

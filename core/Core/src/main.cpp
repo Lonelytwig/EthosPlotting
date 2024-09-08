@@ -16,9 +16,18 @@ int main(int, char**) {
                                           .recv_port = 8080,
                                           .send_ip = "127.0.0.1",
                                           .send_port = 8081});
-  PlotWindowSetup p;
+  PlotWindowSetup p1;
+  PlotWindowSetup p2;
+  PlotWindowSetup p3;
+  PlotWindowSetup p4;
   GuiInterface::getInstance().registerWindow(
-      "styleAdjustmentWindow", std::bind(&PlotWindowSetup::Render, &p));
+      "styleAdjustmentWindow1", std::bind(&PlotWindowSetup::Render, &p1));
+  GuiInterface::getInstance().registerWindow(
+      "styleAdjustmentWindow2", std::bind(&PlotWindowSetup::Render, &p2));
+  GuiInterface::getInstance().registerWindow(
+      "styleAdjustmentWindow3", std::bind(&PlotWindowSetup::Render, &p3));
+  GuiInterface::getInstance().registerWindow(
+      "styleAdjustmentWindow4", std::bind(&PlotWindowSetup::Render, &p4));
 
   // Main loop to render the GUI
   while (GuiInterface::getInstance().render()) {
