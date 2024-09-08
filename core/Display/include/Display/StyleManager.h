@@ -5,18 +5,44 @@
 
 class StyleManager {
  public:
+  /**
+   * @brief Called by main render loop to display tabs
+   *
+   */
   void render();
 
  private:
-  ImGuiStyle saved_style_;  // Stores the last configured style
-
+  /**
+   * @brief Opens style adjustment window for manually editing of all window
+   * color options
+   *
+   */
   void showStyleAdjustmentWindow();
-  // Show the style adjustment window
+
+  /**
+   * @brief Manages logic to display menu options
+   *
+   */
   void showMainMenuBar();
 
+  /**
+   * @brief Custom default modern green style
+   *
+   */
   void applyModernGreenStyle();
 
+  /**
+   * @brief Save current style to file
+   *
+   * @param filename
+   */
   void saveStyleToFile(const std::string& filename);
+
+  /**
+   * @brief Load saved style from file
+   *
+   * @param filename
+   */
   void loadStyleFromFile(const std::string& filename);
 
   bool show_style_adjustment_window_ = false;
