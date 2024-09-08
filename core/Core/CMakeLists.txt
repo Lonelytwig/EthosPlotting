@@ -6,13 +6,14 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 # Set the source files for the executable
 set(CORE_SRC
     src/main.cpp          # Main entry point
+    src/PlotWindowSetup.cc
 )
 
 # Add executable using the source files directly
 add_executable(EthosPlotting ${CORE_SRC})
 
 # Add include directory
-target_include_directories(EthosPlotting PUBLIC inc)
+target_include_directories(EthosPlotting PUBLIC include)
 
 # Set the output directories for the executable
 set_target_properties(EthosPlotting PROPERTIES

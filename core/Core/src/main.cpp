@@ -7,7 +7,7 @@
 #include <thread>
 
 #include "ByteStream/ByteStreamInterface.h"
-#include "Display/CustomButton.h"
+#include "Core/PlotWindowSetup.h"
 #include "Display/GuiInterface.h"
 
 int main(int, char**) {
@@ -16,9 +16,9 @@ int main(int, char**) {
                                           .recv_port = 8080,
                                           .send_ip = "127.0.0.1",
                                           .send_port = 8081});
-
-  // GuiInterface::getInstance().registerWindow(
-  //     "styleAdjustmentWindow", std::bind(&StyleManager::render, &styler));
+  PlotWindowSetup p;
+  GuiInterface::getInstance().registerWindow(
+      "styleAdjustmentWindow", std::bind(&PlotWindowSetup::Render, &p));
 
   // Main loop to render the GUI
   while (GuiInterface::getInstance().render()) {
