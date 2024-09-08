@@ -4,6 +4,7 @@
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 BUILD_DIR="${SCRIPT_DIR}/build"
 CMAKE_DIR="${SCRIPT_DIR}"
+APP_DIR="${SCRIPT_DIR}"/app/EthosPlotting.exe
 OS_PLAT=""
 
 detect_os() {
@@ -83,9 +84,9 @@ clean() {
     rm -rf "${BUILD_DIR}"
 }
 
-# Upload ouput binary to device
-upload() {
-    echo NOT IMPLEMENTED
+# Run ouput binary to device
+run() {
+    ${APP_DIR}
 }
 
 # Display build dependency graph
@@ -127,7 +128,7 @@ if [ $# -eq 0 ]; then
     help
     exit 1
 fi
-while getopts bchguq flag;
+while getopts bchgrq flag;
 do
     case ${flag} in
         b)  # Build program
@@ -138,8 +139,8 @@ do
             help;;
         g)  # Generate dependency graph
             graph;;
-        u)  # Upload FW to device
-            upload;;
+        r)  # Run executable
+            run;;
         q)
             generate_header_dependency_graph;;
     esac
