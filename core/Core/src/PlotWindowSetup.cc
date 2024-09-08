@@ -2,6 +2,7 @@
 
 #include <algorithm>
 #include <cmath>  // For sin()
+#include <unordered_map>
 
 // Function to simulate available serial ports (replace with actual
 // implementation)
@@ -17,7 +18,15 @@ ByteStreamConfig::ByteStreamConfig()
       selected_serial_port(0) {
   strcpy(ip_address, "192.168.1.1");
 }
-// Custom button rendering function with hover animation using public ImGui API
+// Structure to store the hover state and animation progress for each button
+struct ButtonState {
+  bool was_hovered = false;
+  float animation_progress = 0.0f;
+};
+
+// Create a global or static map to hold the state of each button
+static std::unordered_map<std::string, ButtonState> button_states;
+
 bool CustomHoverButton(const char* label,
                        const ImVec2& size_arg = ImVec2(0, 0)) {
   ImGuiStyle& style = ImGui::GetStyle();
@@ -33,6 +42,9 @@ bool CustomHoverButton(const char* label,
   ImVec2 min_pos = pos;
   ImVec2 max_pos = ImVec2(pos.x + size.x, pos.y + size.y);
 
+  // Retrieve or initialize the state for this button
+  ButtonState& state = button_states[label];
+
   // Create an invisible button
   ImGui::InvisibleButton(label, size);
 
@@ -46,16 +58,30 @@ bool CustomHoverButton(const char* label,
                             min_pos.y + style.FramePadding.y),
                      ImGui::GetColorU32(ImGuiCol_Text), label);
 
-  // Draw animated lines on hover
+  // Check hover state and manage the animation
   if (hovered) {
-    float animation_time = static_cast<float>(ImGui::GetTime());
+    // Start or continue animation when hovered
+    if (!state.was_hovered) {
+      state.animation_progress = 0.0f;  // Reset progress when first hovered
+    }
+    state.was_hovered = true;
+    // Increase progress over time
+    state.animation_progress += ImGui::GetIO().DeltaTime * 2.f;
+    if (state.animation_progress > 1.0f)
+      state.animation_progress = 1.0f;  // Cap progress at 1.0f
+  } else {
+    // Reset animation progress when not hovered
+    state.was_hovered = false;
+    state.animation_progress = 0.0f;
+  }
+
+  // Draw animated lines on hover
+  if (state.was_hovered) {
     float max_width = max_pos.x - min_pos.x;
     float top_line_width =
-        max_width *
-        (0.5f + 0.5f * std::sin(animation_time * 3.0f));  // Right to left
+        max_width * state.animation_progress;  // Animate line width
     float bottom_line_width =
-        max_width *
-        (0.5f + 0.5f * std::sin(animation_time * 3.0f));  // Left to right
+        max_width * state.animation_progress;  // Animate line width
 
     draw_list->AddLine(ImVec2(max_pos.x, min_pos.y),
                        ImVec2(max_pos.x - top_line_width, min_pos.y),
