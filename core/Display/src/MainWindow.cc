@@ -8,14 +8,11 @@ static void glfw_error_callback(int error, const char* description) {
   std::cerr << "GLFW Error " << error << ": " << description << std::endl;
 }
 
-// Static method to get the singleton instance
 GuiInterface& GuiInterface::getInstance() {
-  static GuiInterface
-      instance;  // Guaranteed to be destroyed and instantiated on first use
+  static GuiInterface instance;
   return instance;
 }
 
-// Private constructor
 GuiInterface::GuiInterface() {
   // Setup GLFW
   glfwSetErrorCallback(glfw_error_callback);
@@ -72,13 +69,13 @@ void GuiInterface::pollEvents() { glfwPollEvents(); }
 
 void GuiInterface::registerWindow(const std::string& name,
                                   const RenderCallback& callback) {
-  render_callbacks_[name] =
-      callback;  // Store the callback with its associated name
+  // Store the callback with its associated name
+  render_callbacks_[name] = callback;
 }
 
 void GuiInterface::unregisterWindow(const std::string& name) {
-  render_callbacks_.erase(
-      name);  // Remove the callback associated with the given name
+  // Remove the callback associated with the given name
+  render_callbacks_.erase(name);
 }
 
 bool GuiInterface::render() {
@@ -144,16 +141,12 @@ void GuiInterface::renderWindows() {
   // Render all registered windows
   for (const auto& [name, callback] : render_callbacks_) {
     ImGui::Begin(name.c_str());
-    callback();  // Execute the callback
+    callback();
     ImGui::End();
   }
 }
 
-// Function to render menu bars
-void GuiInterface::renderMenuBars() {
-  // Example: Render the Style menu bar
-  styler_.Render();
-}
+void GuiInterface::renderMenuBars() { styler_.Render(); }
 
 void GuiInterface::closeWindowResources() {
   static bool close_window = false;

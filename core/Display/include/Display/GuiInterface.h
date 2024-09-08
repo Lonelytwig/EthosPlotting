@@ -18,44 +18,77 @@ using RenderCallback = std::function<void()>;
 
 class GuiInterface {
  public:
-  // Get the singleton instance
+  /**
+   * @brief Enforce there is a single gui window in the enviornment
+   *
+   * @return GuiInterface&
+   */
   static GuiInterface& getInstance();
 
-  // Render the GUI, returns false if the window should close
+  /**
+   * @brief GUI render loop
+   *
+   * @return true
+   * @return false
+   */
   bool render();
 
-  // Register a new window callback with a unique name
+  /**
+   * @brief Register a new window callback with a unique name
+   *
+   * @param name
+   * @param callback
+   */
   void registerWindow(const std::string& name, const RenderCallback& callback);
-  void registerWindow(const RenderCallback& callback);
 
-  // Unregister a window callback by its unique name
+  /**
+   * @brief Unregister a window callback by its unique name
+   *
+   * @param name
+   */
   void unregisterWindow(const std::string& name);
 
  private:
-  // Private constructor to prevent direct instantiation
   GuiInterface();
   ~GuiInterface();
 
-  // Delete copy constructor and assignment operator to prevent copies
   GuiInterface(const GuiInterface&) = delete;
   GuiInterface& operator=(const GuiInterface&) = delete;
 
-  // Poll for user input events
+  /**
+   * @brief Poll for user input events
+   *
+   */
   void pollEvents();
 
-  // Setup window with OpenGL and ImGui
+  /**
+   * @brief Setup window with OpenGL and ImGui
+   *
+   * @param width
+   * @param height
+   * @param title
+   */
   void createWindow(int width, int height, const char* title);
 
-  // Render all registered windows
+  /**
+   * @brief Render all registered windows
+   *
+   */
   void renderWindows();
 
+  /**
+   * @brief Render all registered menu bars
+   *
+   */
   void renderMenuBars();
 
-  // Tear down resources when closing the window
+  /**
+   * @brief Tear down resources when closing the window
+   *
+   */
   void closeWindowResources();
 
   GLFWwindow* window_;
-
   StyleManager styler_;
 
   // Map of window names to callbacks
