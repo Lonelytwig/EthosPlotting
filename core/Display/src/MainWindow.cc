@@ -141,49 +141,48 @@ void SetupDocking() {
     ImGui::DockBuilderSetNodeSize(dockspace_id,
                                   viewport->WorkSize);  // Set root node size
 
-    // Split the dockspace into top and bottom zones
-    ImGuiID dock_id_top_bottom =
-        ImGui::DockBuilderSplitNode(dockspace_id, ImGuiDir_Up, 0.8f, nullptr,
-                                    &dockspace_id);  // 80% top, 20% bottom
-    ImGuiID dock_id_bottom = dockspace_id;  // Remaining part at the bottom
-
-    // Further split the top zone into a small top region and a larger central
-    // region
-    ImGuiID dock_id_top = ImGui::DockBuilderSplitNode(
-        dock_id_top_bottom, ImGuiDir_Up, 0.2f, nullptr,
-        &dock_id_top_bottom);  // 20% for top window
+    // Split the main dockspace into five sub-docks
+    ImGuiID dock_id_top =
+        ImGui::DockBuilderSplitNode(dockspace_id, ImGuiDir_Up, 0.2f, nullptr,
+                                    &dockspace_id);  // 20% for top window
+    ImGuiID dock_id_bottom =
+        ImGui::DockBuilderSplitNode(dockspace_id, ImGuiDir_Down, 0.2f, nullptr,
+                                    &dockspace_id);  // 20% for bottom window
     ImGuiID dock_id_center =
-        dock_id_top_bottom;  // Remaining space in the center
+        dockspace_id;  // Remaining space in the center (60%)
 
-    // Further split the central region into left and right zones
-    ImGuiID dock_id_left = ImGui::DockBuilderSplitNode(
+    // Split the center into two zones: left and right
+    ImGuiID dock_id_left_center = ImGui::DockBuilderSplitNode(
         dock_id_center, ImGuiDir_Left, 0.5f, nullptr,
-        &dock_id_center);                    // 50% left, 50% right
-    ImGuiID dock_id_right = dock_id_center;  // Remaining part on the right
+        &dock_id_center);  // 50% left, 50% right
+    ImGuiID dock_id_right_center =
+        dock_id_center;  // Remaining part on the right
 
-    // Split the left dockspace vertically into three zones
+    // Further split the left center dock into three vertical zones
     ImGuiID dock_id_left_top = ImGui::DockBuilderSplitNode(
-        dock_id_left, ImGuiDir_Up, 0.33f, nullptr, &dock_id_left);
+        dock_id_left_center, ImGuiDir_Up, 0.33f, nullptr, &dock_id_left_center);
     ImGuiID dock_id_left_middle = ImGui::DockBuilderSplitNode(
-        dock_id_left, ImGuiDir_Up, 0.5f, nullptr, &dock_id_left);
+        dock_id_left_center, ImGuiDir_Up, 0.5f, nullptr, &dock_id_left_center);
     ImGuiID dock_id_left_bottom =
-        dock_id_left;  // Remaining space goes to bottom
+        dock_id_left_center;  // Remaining space goes to bottom
 
-    // Split the right dockspace into two even zones horizontally
-    ImGuiID dock_id_right_top = ImGui::DockBuilderSplitNode(
-        dock_id_right, ImGuiDir_Up, 0.5f, nullptr, &dock_id_right);
+    // Further split the right center dock into two vertical zones
+    ImGuiID dock_id_right_top =
+        ImGui::DockBuilderSplitNode(dock_id_right_center, ImGuiDir_Up, 0.5f,
+                                    nullptr, &dock_id_right_center);
     ImGuiID dock_id_right_bottom =
-        dock_id_right;  // Remaining space goes to bottom
+        dock_id_right_center;  // Remaining space goes to bottom
 
-    // Dock windows into the designated dock nodes
-    ImGui::DockBuilderDockWindow("Top Window", dock_id_top);  // New top window
+    // Dock windows into their dedicated docks
+    ImGui::DockBuilderDockWindow("Top Window",
+                                 dock_id_top);  // Top window in its own dock
     ImGui::DockBuilderDockWindow("Window 1", dock_id_left_top);
     ImGui::DockBuilderDockWindow("Window 2", dock_id_left_middle);
     ImGui::DockBuilderDockWindow("Window 3", dock_id_left_bottom);
     ImGui::DockBuilderDockWindow("Horizontal Window 1", dock_id_right_top);
     ImGui::DockBuilderDockWindow("Horizontal Window 2", dock_id_right_bottom);
-    ImGui::DockBuilderDockWindow("Bottom Window",
-                                 dock_id_bottom);  // Existing bottom window
+    ImGui::DockBuilderDockWindow(
+        "Bottom Window", dock_id_bottom);  // Bottom window in its own dock
 
     // Finalize the dock layout
     ImGui::DockBuilderFinish(dockspace_id);
